@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Patient Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #e9f2fb;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 28px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #003366;
+        }
+
+        .form-field {
+            flex: 1 1 45%;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .btn-group {
+            flex: 1 1 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-submit { background-color: #007bff; }
+        .btn-summary { background-color: #6c757d; }
+        .btn-clear { background-color: #dc3545; }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            color: #155724;
+        }
+
+        hr {
+            width: 100%;
+            margin: 30px 0;
+            border-top: 1px solid #ccc;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .form-field {
+                flex: 1 1 100%;
+            }
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Enter Daily Patient Data</h2>
+
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Date Field -->
+            <div style="flex: 1 1 100%;">
+                <label>{{ form.date.label }}</label>
+                {{ form.date }}
+            </div>
+
+            <hr>
+
+            <!-- Dynamic Fields -->
+            {% for field in form %}
+                {% if not field.name == 'date' %}
+                    <div class="form-field">
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Submit & Summary Buttons -->
+            <div class="btn-group">
+                <button type="submit" class="btn btn-submit">Submit</button>
+                <a href="{% url 'patient_summary' %}" class="btn btn-summary" style="text-decoration: none;">View Summary</a>
+            </div>
+        </form>
+
+        <!-- Clear Data Button -->
+        <form action="{% url 'clear_patient_data' %}" method="post" style="margin-top: 20px; text-align: center;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-clear"
+                onclick="return confirm('Are you sure you want to delete ALL patient data?');">
+                Clear All Patient Data
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

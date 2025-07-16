@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Summary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #e9f2fb;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 28px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .last-entry {
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f9ff;
+        }
+
+        h4 {
+            text-align: center;
+            color: #003366;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            table th, table td {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Patient Summary</h2>
+
+        {% if last_entry %}
+            <div class="last-entry">
+                Last Entry Date: <strong>{{ last_entry|date:"F j, Y" }}</strong>
+            </div>
+        {% else %}
+            <div class="last-entry" style="color: #999;">
+                No data has been entered yet.
+            </div>
+        {% endif %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Disease</th>
+                    <th>Age Group</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in totals %}
+                <tr>
+                    <td>{{ row.disease__name }}</td>
+                    <td>
+                        {% if row.age_group == 'U1' %}Under 1 Year
+                        {% elif row.age_group == 'U5' %}Under 5 Years
+                        {% elif row.age_group == 'A5' %}Above 5 Years
+                        {% else %}Unknown{% endif %}
+                    </td>
+                    <td>{{ row.total_male }}</td>
+                    <td>{{ row.total_female }}</td>
+                    <td>{{ row.total_male|add:row.total_female }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h4>Total Patients: {{ overall_total }}</h4>
+
+        <div class="btn-container">
+            <a href="{% url 'enter_patient_data' %}" class="btn">Enter More Data</a>
+        </div>
+    </div>
+</body>
+</html>
